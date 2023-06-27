@@ -47,13 +47,13 @@ exports.create = async (req, res) => {
 
         // Create a User
         const user = {
-          id: req.body.id,
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           phoneNumber: req.body.phoneNumber,
           email: req.body.email,
           password: hash,
           salt: salt,
+          role: req.body.role,
         };
 
         // Save User in the database
@@ -102,6 +102,21 @@ exports.create = async (req, res) => {
 exports.findAll = (req, res) => {
   const id = req.params.id;
   var condition = id ? { id: { [Op.like]: `%${id}%` } } : null;
+
+  User.findAll({ where: condition })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving users.",
+      });
+    });
+};
+
+// Retrieve all Clerks from the database.
+exports.findAllClerks = (req, res) => {
+  var condition = { role: { [Op.eq]: 1 } };
 
   User.findAll({ where: condition })
     .then((data) => {
