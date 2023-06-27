@@ -9,6 +9,9 @@ module.exports = (app) => {
   // Retrieve all Users
   router.get("/users/", User.findAll);
   
+  // Retrieve all Clerks
+  router.get("/clerks/", User.findAllClerks);
+  
   // Retrieve all User Subscriptions
   router.get("/users/:id/subscriptions/", User.findSubscriptions);
 
