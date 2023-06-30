@@ -238,9 +238,15 @@ exports.findByEmail = (req, res) => {
 };
 
 // Update a User by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   const id = req.params.id;
-
+  let user = await User.findOne({id: id});
+  if(typeof req.body.password == "string"){
+    let salt = user.dataValues.salt;
+    let hash = await hashPassword(req.body.password, salt);
+    req.body.password = hash;
+    req.body.salt = salt;
+  }
   User.update(req.body, {
     where: { id: id },
   })
