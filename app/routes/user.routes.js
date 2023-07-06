@@ -12,6 +12,9 @@ module.exports = (app) => {
   // Retrieve all Clerks
   router.get("/clerks/", User.findAllClerks);
   
+  // Retrieve all Drivers
+  router.get("/drivers/", User.findAllDrivers);
+  
   // Retrieve all User Subscriptions
   router.get("/users/:id/subscriptions/", User.findSubscriptions);
 

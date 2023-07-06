@@ -129,6 +129,21 @@ exports.findAllClerks = (req, res) => {
     });
 };
 
+// Retrieve all Drivers from the database.
+exports.findAllDrivers = (req, res) => {
+  var condition = { role: { [Op.eq]: 0 } };
+
+  User.findAll({ where: condition })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving users.",
+      });
+    });
+};
+
 // Retrieve all User Subscriptions from the database.
 exports.findSubscriptions = (req, res) => {
   const id = req.params.id;
