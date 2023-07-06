@@ -28,5 +28,5 @@ module.exports = (app) => {
   // Delete all Itineraries
   router.delete("/itineraries/", [authenticateRoute], Itinerary.deleteAll);
 
-  app.use("/travelapi", router);
+  app.use("/acmeapi", router);
 };
