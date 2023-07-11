@@ -37,7 +37,7 @@ require("./app/routes/auth.routes.js")(app);
 require("./app/routes/itinerary.routes")(app);
 require("./app/routes/itineraryDay.routes")(app);
 require("./app/routes/hotel.routes")(app);
-require("./app/routes/site.routes")(app);
+require("./app/routes/order.routes")(app);
 require("./app/routes/customer.routes")(app);
 require("./app/routes/user.routes")(app);
 
