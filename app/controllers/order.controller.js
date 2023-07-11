@@ -87,8 +87,20 @@ exports.findAll = (req, res) => {
 // Find a single Order with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-  Order.findAll({
+  Order.findOne({
     where: { id: id },
+    include: [
+      {
+        model: Customer,
+        as: "customer",
+        required: false,
+      },
+      {
+        model: Customer,
+        as: "deliverToCustomer",
+        required: false,
+      },
+    ]
   })
     .then((data) => {
       if (data) {

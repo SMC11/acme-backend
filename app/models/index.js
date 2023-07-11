@@ -74,30 +74,20 @@ db.itineraryDay.belongsTo(
 
 
 //foreign key for order
-db.customer.hasOne(
-  db.order,
-  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
-);
-db.customer.hasOne(
-  db.order,
-  { as: "deliverToCustomer"},
-  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
-);
-db.user.hasOne(
-  db.order,
+db.order.belongsTo(
+  db.user,
   { as: "user"},
   { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 );
 db.order.belongsTo(
   db.customer,
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
+  { as: 'customer' },
+  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 )
 db.order.belongsTo(
   db.customer,
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
-)
-db.user.belongsTo(
-  db.order
+  { as: 'deliverToCustomer' },
+  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 )
 
 //foreign key for subscription
