@@ -17,7 +17,7 @@ db.sequelize = sequelize;
 db.itinerary = require("./itinerary.model.js")(sequelize, Sequelize);
 db.itineraryDay = require("./itineraryDay.model.js")(sequelize, Sequelize);
 db.itineraryDayEvent = require("./itineraryDayEvent.model.js")(sequelize, Sequelize);
-db.site = require("./site.model.js")(sequelize, Sequelize);
+db.order = require("./order.model.js")(sequelize, Sequelize);
 db.hotel = require("./hotel.model.js")(sequelize, Sequelize);
 db.customer = require("./customer.model.js")(sequelize, Sequelize);
 db.subscription = require("./subscription.model.js")(sequelize, Sequelize);
@@ -72,29 +72,33 @@ db.itineraryDay.belongsTo(
   { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 );
 
-//foreign key for itineraryDayEvent
-db.itineraryDay.hasMany(
-  db.itineraryDayEvent,
-  { as: "itineraryDayEvent"},
-  { foreignKey: { allowNull: false }, onDelete: "CASCADE"}
-);
-db.itineraryDayEvent.belongsTo(
-  db.itineraryDay,
-  { as: "itineraryDay" },
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
-);
-db.itineraryDayEvent.belongsTo(
-  db.site,
-  { as: "site" },
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
-);
 
-//foreign key for site
-db.site.hasOne(
-  db.itineraryDayEvent,
-  { as: "site"},
+//foreign key for order
+db.customer.hasOne(
+  db.order,
   { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 );
+db.customer.hasOne(
+  db.order,
+  { as: "deliverToCustomer"},
+  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
+);
+db.user.hasOne(
+  db.order,
+  { as: "user"},
+  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
+);
+db.order.belongsTo(
+  db.customer,
+  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
+)
+db.order.belongsTo(
+  db.customer,
+  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
+)
+db.user.belongsTo(
+  db.order
+)
 
 //foreign key for subscription
 db.user.hasMany(
