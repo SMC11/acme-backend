@@ -15,7 +15,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.itinerary = require("./itinerary.model.js")(sequelize, Sequelize);
-db.itineraryDay = require("./itineraryDay.model.js")(sequelize, Sequelize);
+db.map = require("./map.model.js")(sequelize, Sequelize);
+db.direction = require("./direction.model.js")(sequelize, Sequelize);
 db.itineraryDayEvent = require("./itineraryDayEvent.model.js")(sequelize, Sequelize);
 db.order = require("./order.model.js")(sequelize, Sequelize);
 db.hotel = require("./hotel.model.js")(sequelize, Sequelize);
@@ -46,30 +47,6 @@ db.itinerary.belongsTo(
   db.user,
   { as: "user" },
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
-);
-
-//foreign key for itineraryDay
-db.itinerary.hasMany(
-  db.itineraryDay,
-  { as: "itineraryDay"},
-  { foreignKey: { allowNull: false }, onDelete: "CASCADE"}
-);
-db.itineraryDay.belongsTo(
-  db.itinerary,
-  { as: "itinerary" },
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
-);
-
-//foreign key for hotel
-db.hotel.hasOne(
-  db.itineraryDay,
-  { as: "hotel"},
-  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
-);
-db.itineraryDay.belongsTo(
-  db.hotel,
-  { as: "hotel"},
-  { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 );
 
 
