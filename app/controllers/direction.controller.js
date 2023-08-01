@@ -206,9 +206,9 @@ async function fetchMap() {
             return length;
         }
         for(var i = 0; i< data.length; i++){
-            insertVertex(data[i].fromNode);
-            insertVertex(data[i].toNode);
-            insertEdge(data[i].fromNode, data[i].toNode)
+            insertVertex(data[i].fromNode);                 //{ 'A0': new Set()}
+            insertVertex(data[i].toNode);                   //{ 'B1': new Set()}
+            insertEdge(data[i].fromNode, data[i].toNode);   //{'A0': ['B1', 'B2']}
         }
     })
     .catch((err) => {
