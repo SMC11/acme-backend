@@ -3,6 +3,7 @@ const Direction = require("../controllers/direction.controller.js");
 
 const Order = db.order;
 const Customer = db.customer;
+const User = db.user;
 const Op = db.Sequelize.Op;
 // Create and Save a new Order
 exports.create = async (req, res) => {
@@ -40,7 +41,7 @@ exports.create = async (req, res) => {
     quotedPrice: (price*blocks),
     customerId: req.body.customerId,
     deliverToCustomerId: req.body.deliverToCustomerId,
-    userId: req.body.userId,
+    userId: null,
     state: 0,
   };
   // Save Order in the database
@@ -70,6 +71,11 @@ exports.findAll = (req, res) => {
       {
         model: Customer,
         as: "deliverToCustomer",
+        required: false,
+      },
+      {
+        model: User,
+        as: "user",
         required: false,
       },
     ],
