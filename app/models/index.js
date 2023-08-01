@@ -14,14 +14,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.itinerary = require("./itinerary.model.js")(sequelize, Sequelize);
 db.map = require("./map.model.js")(sequelize, Sequelize);
-db.direction = require("./direction.model.js")(sequelize, Sequelize);
-db.itineraryDayEvent = require("./itineraryDayEvent.model.js")(sequelize, Sequelize);
 db.order = require("./order.model.js")(sequelize, Sequelize);
-db.hotel = require("./hotel.model.js")(sequelize, Sequelize);
 db.customer = require("./customer.model.js")(sequelize, Sequelize);
-db.subscription = require("./subscription.model.js")(sequelize, Sequelize);
 db.session = require("./session.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 
@@ -37,17 +32,6 @@ db.session.belongsTo(
   { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
 );
 
-// foreign keys for itinerary
-db.user.hasMany(
-  db.itinerary,
-  { as: "itinerary"},
-  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
-);
-db.itinerary.belongsTo(
-  db.user,
-  { as: "user" },
-  { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
-);
 
 
 //foreign key for order
@@ -66,27 +50,5 @@ db.order.belongsTo(
   { as: 'deliverToCustomer' },
   { foreignKey: { allowNull: true }, onDelete: "SET NULL"}
 )
-
-//foreign key for subscription
-db.user.hasMany(
-  db.subscription,
-  { as: "subscription"},
-  { foreignKey: { allowNull: false }, onDelete: "CASCADE"}
-);
-db.subscription.belongsTo(
-  db.user,
-  { as: "user" },
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
-);
-db.itinerary.hasMany(
-  db.subscription,
-  { as: "subscription"},
-  { foreignKey: { allowNull: false }, onDelete: "CASCADE"}
-);
-db.subscription.belongsTo(
-  db.itinerary,
-  { as: "itinerary" },
-  { foreignKey: {allowNull: false }, onDelete: "CASCADE"}
-);
 
 module.exports = db;
