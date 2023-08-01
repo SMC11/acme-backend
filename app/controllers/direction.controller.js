@@ -225,10 +225,10 @@ async function init() {
 }
 
 function decoratePath(path){
-    var decoratedPath = "First, Start from ";
+    var decoratedPath = "Start from ";
     for(var node in path){
-        var street = node.substring(0,1);
-        var avenue = node.substring(1,2);
+        var street = path[node].substring(0,1);
+        var avenue = path[node].substring(1,2);
         var ave = "";
         if(parseInt(avenue) == 1){
             ave = "st";
@@ -239,9 +239,10 @@ function decoratePath(path){
         }else if(parseInt(avenue) >= 4){
             ave = "th";
         }
-        decoratedPath += avenue + ave + " Ave and " + street + " Street,\n Then go to ";
+        decoratedPath += avenue + ave + " Ave and " + street + " Street,\n then, go to ";
     }
-    return decoratedPath.substring(0, (decoratedPath.length-14));
+    var directions = decoratedPath.substring(0, (decoratedPath.length-14));
+    return { 'directions': directions};
 }
 
 exports.findRoute = async (req, res) => {

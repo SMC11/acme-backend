@@ -61,6 +61,18 @@ exports.create = async (req, res) => {
 // Find all Orders
 exports.findAll = (req, res) => {
   Order.findAll({
+    include: [
+      {
+        model: Customer,
+        as: "customer",
+        required: false,
+      },
+      {
+        model: Customer,
+        as: "deliverToCustomer",
+        required: false,
+      },
+    ],
     order: [
       ["deliveryTime", "DESC"],
     ],
