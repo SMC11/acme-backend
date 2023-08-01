@@ -41,6 +41,7 @@ exports.create = async (req, res) => {
     customerId: req.body.customerId,
     deliverToCustomerId: req.body.deliverToCustomerId,
     userId: req.body.userId,
+    state: 0,
   };
   // Save Order in the database
   Order.create(order)
