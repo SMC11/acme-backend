@@ -5,6 +5,7 @@ const Customer = db.customer;
 
 const streets = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 const avenues = ['1', '2', '3', '4', '5', '6', '7'];
+var writeToDb = false;
 
 const vertices = {};
 const edges = [];
@@ -95,7 +96,9 @@ function insertEdge(u, v, bi = false, x = 1) {
         return;
     }
     vertices[u].add(v);
+    storeNodes(u,v);
     if (bi) {
+        storeNodes(v, u);
         vertices[v].add(u);
     }
     return edges;
@@ -146,7 +149,6 @@ function calculateMap() {
                     if (avenues[j] == '2' || avenues[j] == '6') {
                         bi = true;
                     }
-                    console.log(streets[i] + avenues[j], streets[i + 1] + avenues[j], bi);
                     insertEdge(streets[i] + avenues[j], streets[i + 1] + avenues[j], bi);
                     bi = false;
                 }
@@ -162,7 +164,6 @@ function calculateMap() {
                     if (avenues[j] == '2' || avenues[j] == '6') {
                         bi = true;
                     }
-                    console.log(streets[i] + avenues[j], streets[i + 1] + avenues[j], bi);
                     insertEdge(streets[i] + avenues[j], streets[i + 1] + avenues[j], bi);
                     bi = false;
                 }
@@ -177,34 +178,52 @@ function print() {
     }
 }
 
-function storeMap() {
-    for (var k in vertices) {
-        // console.log();
-        var map = {
-            name: k,
-            adjacentNodes: JSON.stringify(Array.from(vertices[k]))
-        };
+function storeNodes(u, v) {
+    var map = {
+        fromNode: u,
+        toNode: v,
+    };
+    if(writeToDb){
         Map.create(map)
             .catch((err) => {
-                res.status(500).send({
-                    message: err.message || "Some error occurred while creating the Map.",
-                });
+                throw new Error("Some error occurred while creating the Map."+err);            
             });
-
-    };
+    }
 }
 
-function fetchMap() {
-
+async function fetchMap() {
+    var length = -1;
+    await Map.findAll({
+        raw: true,
+        order: [
+            ["createdAt", "ASC"],
+          ],
+        })
+    .then((data)=> {
+        if(!data.length){
+            writeToDb = true;
+            length = 0;
+            return length;
+        }
+        for(var i = 0; i< data.length; i++){
+            insertVertex(data[i].fromNode);
+            insertVertex(data[i].toNode);
+            insertEdge(data[i].fromNode, data[i].toNode)
+        }
+    })
+    .catch((err) => {
+        throw new Error(err.message || "Some error occurred while creating the Map.");
+    });
+    return length;
 }
 
-function init() {
+async function init() {
     createVertices();
     calculateMap();
     // print();
-    storeMap();
+    writeToDb = false;
 }
-init();
+
 function decoratePath(path){
     var decoratedPath = "First, Start from ";
     for(var node in path){
@@ -225,16 +244,21 @@ function decoratePath(path){
     return decoratedPath.substring(0, (decoratedPath.length-14));
 }
 
-exports.findRoute = (req, res) => {
+exports.findRoute = async (req, res) => {
+    var length = await fetchMap();
+    if(length === 0){
+        await init();
+    }
+    
     var c1 = req.params.customerId;
     var c2 = req.params.deliverToCustomerId;
-    Customer.findOne({
+    await Customer.findOne({
             where: {
                 id: c1
             },
         })
-        .then((c1data) => {
-            Customer.findOne({
+        .then(async (c1data) => {
+            await Customer.findOne({
                     where: {
                         id: c2
                     },
@@ -267,7 +291,52 @@ exports.findRoute = (req, res) => {
         });
 };
 // getShortestPathUsingDijkstrasAlgorithm('G5', 'A2');
+exports.findRouteLength = async (c1, c2) => {
+    var length = await fetchMap();
+    if(length === 0){
+        await init();
+    }
+    return await callAlgorithm(c1, c2).then((result)=> {return result;});
+};
 
+async function callAlgorithm(c1, c2){
+    var pathLength = 0;
+    await Customer.findOne({
+        raw: true,
+        where: {
+            id: c1
+        },
+    })
+    .then(async (c1data) => {
+        await Customer.findOne({
+                raw: true,
+                where: {
+                    id: c2
+                },
+            })
+            .then((c2data) => {
+                var c1address = c1data.address;
+                var c2address = c2data.address;
+                var start = c1address.substring(12,13) + c1address.substring(0,1);
+                var end = c2address.substring(12,13) + c2address.substring(0,1);
+                
+                var path = getShortestPathUsingDijkstrasAlgorithm(start, end);
+                if (path.length) {
+                    pathLength = path.length;
+                    return path.length;
+                } else {
+                    throw new Error(`Cannot find path!`);
+                }
+            })
+            .catch((err) => {
+                throw new Error(err.message || "Error retrieving Customer.");
+            });
+    })
+    .catch((err) => {
+        throw new Error(err.message || "Error retrieving Customer.");
+    });
+    return pathLength;
+}
 
 function getShortestPathUsingDijkstrasAlgorithm(start, end) {
 

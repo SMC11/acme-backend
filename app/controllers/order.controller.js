@@ -1,10 +1,11 @@
 const db = require("../models");
+const Direction = require("../controllers/direction.controller.js");
+
 const Order = db.order;
 const Customer = db.customer;
 const Op = db.Sequelize.Op;
 // Create and Save a new Order
-exports.create = (req, res) => {
-  console.log(req);
+exports.create = async (req, res) => {
   // Validate request
   if (req.body.pickupTime === undefined) {
     const error = new Error("Pickup Time cannot be empty for Order!");
@@ -12,14 +13,6 @@ exports.create = (req, res) => {
     throw error;
   } else if (req.body.deliveryTime === undefined) {
     const error = new Error("Delivery Time cannot be empty for Order!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.blocks === undefined) {
-    const error = new Error("Blocks cannot be empty for Order!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.quotedPrice === undefined) {
-    const error = new Error("Quoted Price cannot be empty for Order!");
     error.statusCode = 400;
     throw error;
   } else if (req.body.customerId === undefined) {
@@ -35,14 +28,16 @@ exports.create = (req, res) => {
     error.statusCode = 400;
     throw error;
   }
-
+  const price = 1.50;
+  var blocks = 0;
+  blocks = await Direction.findRouteLength(req.body.customerId, req.body.deliverToCustomerId);
   // Create a Order
   const order = {
     pickupTime: req.body.pickupTime,
-    finalBill: req.body.finalBill,
+    finalBill: 0.00,
     deliveryTime: req.body.deliveryTime,
-    blocks: req.body.blocks,
-    quotedPrice: req.body.quotedPrice,
+    blocks: blocks,
+    quotedPrice: (price*blocks),
     customerId: req.body.customerId,
     deliverToCustomerId: req.body.deliverToCustomerId,
     userId: req.body.userId,
@@ -58,6 +53,8 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the Order.",
       });
     });
+
+  
 };
 
 // Find all Orders

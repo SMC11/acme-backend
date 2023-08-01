@@ -29,17 +29,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the acme  backend." });
 });
 
-app.post('/photo/upload', upload.single('file'), (req, res) => {
-
-});
-
 require("./app/routes/auth.routes.js")(app);
-require("./app/routes/itinerary.routes")(app);
-require("./app/routes/itineraryDay.routes")(app);
-require("./app/routes/hotel.routes")(app);
 require("./app/routes/order.routes")(app);
 require("./app/routes/customer.routes")(app);
 require("./app/routes/user.routes")(app);
+require("./app/routes/direction.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3202;
