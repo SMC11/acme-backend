@@ -1,14 +1,14 @@
 module.exports = (sequelize, Sequelize) => {
-    const Map = sequelize.define("map", {
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      adjacentNodes: {
-        type: Sequelize.STRING(2048),
-        allowNull: false,
-      },
-    });
-    return Map;
-  };
-  
+  const Map = sequelize.define("map", {
+    fromNode: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    toNode: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+  });
+  return Map;
+};
+
